@@ -37,8 +37,7 @@ app.use(express.json());
 app.use(morgan(':method :url :status :response-time ms'));
 
 app.post('/api/product-info', async (req, res) => {
-  const { title } = req.body; // TODO: Add all other product information here
-  console.log(title);
+  const { brand, description, price, shipCost, shipFrom, shipTo, title } = req.body.product;
 
   if (!title) {
     return res.status(400).json({ error: 'Missing product title' });
@@ -52,23 +51,41 @@ app.post('/api/product-info', async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "model": "deepseek/deepseek-r1-0528:free",
+        // "model": "deepseek/deepseek-r1-0528:free",
+        "model": "google/gemini-2.0-flash-exp:free",
         "messages": [
           {
             "role": 'system',
-            "content": 'You are an assistant that is going to take in product information from shopping sites and you will \
-              calculate the sustainability scores based on several factors. Calculate the CO2 estimate of shipping based on distance \
-              and provide a good alternative of the product if there exists, and give me a reply in the following format: \
-              CO2 Estimate:<number>, Alternative:<string>.\
-              Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
-              "Sorry, I cannot help you with such a query."',
+            "content": [
+              {
+                "type": "text",
+                "text": "RESPOND WITHIN 5 SECONDS given context below:"
+              },
+              {
+                "type": "text",
+                "text": 'Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
+                      calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg of shipping based on distance estimated from shipping origin and destination, \
+                      and provide a good alternative of the product around the same price point (SGD) if there exists, and give me a reply in the following format: \
+                      CO2 Estimate: <number> <reason>, Alternative: <string> <reason>.\
+                      Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
+                      "Sorry, I cannot help you with such a query."',
+                // "cache_control": {
+                //   "type": "ephemeral"
+                // }
+              }
+            ],
           },
           {
             "role": "user",
-            "content": `The product is ${title}. Please send me your response in the pre-defined format.`
+            "content": `The product is ${title}. Brand: ${brand}, Price: ${price}, Shipping Fee: ${shipCost}, Shipping from ${shipFrom} to ${shipTo}, \
+                         Product Description: ${description}. Please send me your response in the pre-defined format.`
           },
         ],
         "stream": true,
+        "reasoning": {
+          "effort": "low",
+          "exclude": true
+        }
       })
     });
 

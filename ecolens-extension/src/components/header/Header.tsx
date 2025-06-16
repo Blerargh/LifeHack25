@@ -1,12 +1,24 @@
 import React, { useState } from 'react'
 import '../../styles/header.css'
 
+interface Product {
+  brand: string;
+  description: string;
+  price: number;
+  shipCost: number;
+  shipFrom: string;
+  shipTo: string;
+  title: string;
+}
+
 const Header: React.FC = () => {
   const [productTitle, setProductTitle] = useState<string>('');
   const [showFull, setShowFull] = useState<boolean>(false);
   const [APIMessage, setAPIMessage] = useState<string>('');
 
   const handleClick = async () => {
+    setProductTitle('');
+    setAPIMessage('');
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
 
@@ -20,7 +32,8 @@ const Header: React.FC = () => {
       files: ["src/scripts/siteinfo.js"]
     });
 
-    const title = results && results[0] && typeof results[0].result === 'string' ? results[0].result : '';
+    const product = results && results[0] ? (results[0].result as Product) : null;
+    const title = product?.title || '';
     setProductTitle(title);
 
     // Backend Sending here
@@ -31,7 +44,7 @@ const Header: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ title }),
+          body: JSON.stringify({ product }),
         });
 
         const data = await res.json();
