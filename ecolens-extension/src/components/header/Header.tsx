@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import '../../styles/header.css'
 
 const Header: React.FC = () => {
-  const [ productTitle, setProductTitle ] = useState<string>('');
+  const [productTitle, setProductTitle] = useState<string>('');
+  const [showFull, setShowFull] = useState<boolean>(false);
+
   const handleClick = async () => {
-    const [ tab ] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
     if (!tab.id) {
       console.error('Active tab has no id');
@@ -16,22 +18,39 @@ const Header: React.FC = () => {
       files: ["src/scripts/siteinfo.js"]
     });
 
-    console.log(results);
-
-    // Assuming the script returns a string as its result
     const title = results && results[0] && typeof results[0].result === 'string' ? results[0].result : '';
     setProductTitle(title);
   }
 
-  return (
-    <>
-      <div className='header-container'>
-        <div className='product-details'>
-          Product Name: {productTitle}
-        </div>
-        <button onClick={handleClick}>Refresh</button>
+  // If showFull, show only the product name in a large, centered box
+  if (showFull && productTitle) {
+    return (
+      <div className="full-product-name-modal">
+        <button className="close-full-btn" onClick={() => setShowFull(false)}>✕</button>
+        <div className="full-product-name-text">{productTitle}</div>
       </div>
-    </>
+    );
+  }
+
+  return (
+    <div className='header-container'>
+      <span style={{marginRight: 8, color: "#222", fontWeight: 500}}>Product Name:</span>
+      <div
+        className='product-details product-details-dark'
+        title={productTitle.length > 24 ? productTitle : ""}
+      >
+        {productTitle || <span style={{color:'#aaa'}}>No product</span>}
+      </div>
+      {productTitle.length > 24 && (
+        <button
+          className="show-full-btn"
+          onClick={() => setShowFull(true)}
+        >
+          Show Full Name
+        </button>
+      )}
+      <button onClick={handleClick} style={{marginLeft: 8}}>Refresh</button>
+    </div>
   )
 }
 
