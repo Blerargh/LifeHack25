@@ -56,8 +56,7 @@ app.post('/api/product-info', async (req, res) => {
         "messages": [
           {
             "role": 'system',
-            "content": 'You are a fast, concise assistant that will only return final answers without thinking. \
-              You are an assistant that is going to take in product information from shopping sites and you will \
+            "content": 'You are an assistant that is going to take in product information from shopping sites and you will \
               calculate the sustainability scores based on several factors. Calculate the CO2 estimate of shipping based on distance \
               and provide a good alternative of the product if there exists, and give me a reply in the following format: \
               CO2 Estimate:<number>, Alternative:<string>.\
@@ -73,22 +72,16 @@ app.post('/api/product-info', async (req, res) => {
       })
     });
 
-    let reply = ''
-
+    let reply = '';
     const reader = openRouterResponse.body?.getReader();
-    if (!reader) {
-      throw new Error('Response body is not readable');
-    }
+    if (!reader) throw new Error('Response body is not readable');
     const decoder = new TextDecoder();
     let buffer = '';
     try {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        // Append new chunk to buffer
         buffer += decoder.decode(value, { stream: true });
-        // console.log(buffer);
-        // Process complete lines from buffer
         while (true) {
           const lineEnd = buffer.indexOf('\n');
           if (lineEnd === -1) break;
@@ -102,18 +95,18 @@ app.post('/api/product-info', async (req, res) => {
               const content = parsed.choices[0].delta.content;
               if (content) {
                 reply += content;
-                io.to(123).emit('updateReply', { reply: reply })
-                console.log(reply);
+                // DO NOT emit here!
               }
-            } catch (e) {
-              // Ignore invalid JSON
-            }
+            } catch (e) { /* ignore */ }
           }
         }
       }
     } finally {
       reader.cancel();
     }
+    // Emit only the final reply
+    io.to(123).emit('updateReply', { reply });
+    console.log('Final reply:', reply);
 
     res.status(200).json({ reply });
   } catch (error) {
