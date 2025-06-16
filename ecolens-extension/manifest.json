@@ -1,13 +1,32 @@
 {
   "manifest_version": 3,
-  "name": "CRXJS React Vite Example",
+  "name": "EcoLens",
+  "description": "Get sustainability scores for products.",
   "version": "1.0.0",
-  "action": { "default_popup": "index.html" },
-  "permissions": ["scripting", "activeTab"],
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": [
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "web_accessible_resources": [
     {
-      "resources": ["src/scripts/siteinfo.js"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "src/scripts/siteinfo.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
-  ]
+  ],
+  "icons": {
+    "16": "greenE.png",
+    "48": "greenE.png",
+    "128": "greenE.png"
+  }
 }

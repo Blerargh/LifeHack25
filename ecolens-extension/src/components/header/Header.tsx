@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import '../../styles/header.css'
 
 const Header: React.FC = () => {
-  const [ productTitle, setProductTitle ] = useState<string>('');
+  const [productTitle, setProductTitle] = useState<string>('');
   const handleClick = async () => {
-    const [ tab ] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
     if (!tab.id) {
       console.error('Active tab has no id');
