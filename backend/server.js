@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const PORT = 5000;
+const PORT = 8080;
 
 app.use(cors());
 app.use(express.json());
@@ -44,7 +44,9 @@ app.post('/api/product-info', async (req, res) => {
     });
 
     const data = await openRouterResponse.json();
-    res.json({ reply: data });
+    const reply = data.choices[0].message.content;
+
+    res.status(200).json({ reply });
   } catch (error) {
     console.error('Error sending to OpenRouter:', error.message);
     res.status(500).json({ error: 'Failed to get response from OpenRouter' });
