@@ -7,7 +7,7 @@ const Header: React.FC = () => {
 
   const handleClick = async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
+
 
     if (!tab.id) {
       console.error('Active tab has no id');
@@ -21,6 +21,31 @@ const Header: React.FC = () => {
 
     const title = results && results[0] && typeof results[0].result === 'string' ? results[0].result : '';
     setProductTitle(title);
+
+    // Backend Sending here
+    if (title) {
+      try {
+        const res = await fetch('http://localhost:5000/api/product-info', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ title }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          const message = data.reply;
+          message.trim();
+
+          // TODO: Process the response from OpenRouter and send to Footer
+        }
+
+      } catch (err) {
+        console.error('Error sending title to backend:', err);
+      }
+    }
   }
 
   // If showFull, show only the product name in a large, centered box
@@ -35,12 +60,12 @@ const Header: React.FC = () => {
 
   return (
     <div className='header-container'>
-      <span style={{marginRight: 8, color: "#222", fontWeight: 500}}>Product Name:</span>
+      <span style={{ marginRight: 8, color: "#222", fontWeight: 500 }}>Product Name:</span>
       <div
         className='product-details product-details-dark'
         title={productTitle.length > 24 ? productTitle : ""}
       >
-        {productTitle || <span style={{color:'#aaa'}}>No product</span>}
+        {productTitle || <span style={{ color: '#aaa' }}>No product</span>}
       </div>
       {productTitle.length > 24 && (
         <button
@@ -50,7 +75,7 @@ const Header: React.FC = () => {
           Show Full Name
         </button>
       )}
-      <button onClick={handleClick} style={{marginLeft: 8}}>Refresh</button>
+      <button onClick={handleClick} style={{ marginLeft: 8 }}>Refresh</button>
     </div>
   )
 }
