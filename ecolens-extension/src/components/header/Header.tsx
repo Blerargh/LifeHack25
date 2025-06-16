@@ -7,6 +7,7 @@ const Header: React.FC = () => {
 
   const handleClick = async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
 
     if (!tab.id) {
       console.error('Active tab has no id');
