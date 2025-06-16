@@ -23,6 +23,4 @@ An option to `Load Unpacked` should appear.
 
 ![Image of `chrome://extensions/` header](image.png)
 
-Link the `dist` folder and the extension is ready to be deployed!
-
-Note to developers: The extension needs to be reloaded whenever changes are made to reflect any changes to the popup
+Link the `dist` folder and the extension is ready to be tested on your browser.
