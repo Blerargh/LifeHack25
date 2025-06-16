@@ -1,0 +1,11 @@
+{
+  "name": "EcoLens",
+  "description": "Your trusty online shopping tool on sustainability recommendations.",
+  "version": "1.0.0",
+
+  "manifest_version": 3,
+
+  "action": {
+    "default_popup": "index.html"
+  }
+}
