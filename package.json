@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "setup": "npm i && cd ecolens-extension && npm i && cd ../backend && npm i",
+    "dev": "concurrently \"npm run dev --prefix ecolens-extension\" \"npm run dev --prefix backend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "react-router-dom": "^7.6.0"
+  }
+}
