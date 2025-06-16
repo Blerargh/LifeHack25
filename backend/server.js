@@ -2,10 +2,35 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
+import http from 'http';
+import { Server } from 'socket.io'
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true,
+  }
+});
 const PORT = 8080;
+
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  socket.on('join', (id) => {
+    socket.join(id);
+    console.log(`User ${socket.id} joined lobby ${id}`);
+  })
+
+  socket.on('leave', (id) => {
+    socket.leave(id);
+    console.log(`User ${socket.id} left lobby ${id}`);
+  });
+});
+
 
 app.use(cors());
 app.use(express.json());
@@ -13,6 +38,7 @@ app.use(morgan(':method :url :status :response-time ms'));
 
 app.post('/api/product-info', async (req, res) => {
   const { title } = req.body; // TODO: Add all other product information here
+  console.log(title);
 
   if (!title) {
     return res.status(400).json({ error: 'Missing product title' });
@@ -76,7 +102,8 @@ app.post('/api/product-info', async (req, res) => {
               const content = parsed.choices[0].delta.content;
               if (content) {
                 reply += content;
-                // console.log(reply);
+                io.to(123).emit('updateReply', { reply: reply })
+                console.log(reply);
               }
             } catch (e) {
               // Ignore invalid JSON
@@ -95,6 +122,6 @@ app.post('/api/product-info', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });

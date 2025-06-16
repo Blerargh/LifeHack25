@@ -4,6 +4,7 @@ import '../../styles/header.css'
 const Header: React.FC = () => {
   const [productTitle, setProductTitle] = useState<string>('');
   const [showFull, setShowFull] = useState<boolean>(false);
+  const [APIMessage, setAPIMessage] = useState<string>('');
 
   const handleClick = async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -38,6 +39,8 @@ const Header: React.FC = () => {
         if (res.ok) {
           const message = data.reply;
           message.trim();
+          setAPIMessage(message)
+          console.log(APIMessage);
 
           // TODO: Process the response from OpenRouter and send to Footer
         }
