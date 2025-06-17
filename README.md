@@ -19,11 +19,15 @@ git clone https://github.com/Blerargh/LifeHack25.git
 ```bash
 npm run setup
 ```
-3. Run the development server
+3. Add the Environment Variables for backend hosting in /backend/.env
+``` bash
+OPENROUTER_API_KEY = <Your Gemini API>
+```
+4. Run the development server
 ```bash
 npm run dev
 ```
-4. Go to `chrome://extensions/` and enable Developer Mode. An option to `Load Unpacked` should appear. 
+5. Go to `chrome://extensions/` and enable Developer Mode. An option to `Load Unpacked` should appear. 
 
 ![Image of `chrome://extensions/` header](image.png)
 
