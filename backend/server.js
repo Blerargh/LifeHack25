@@ -4,7 +4,10 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import http from 'http';
 import { Server } from 'socket.io'
+import { GoogleGenAI } from "@google/genai";
 dotenv.config();
+
+const ai = new GoogleGenAI({ apiKey: process.env.OPENROUTER_API_KEY });
 
 const app = express();
 const server = http.createServer(app);
@@ -44,86 +47,23 @@ app.post('/api/product-info', async (req, res) => {
   }
 
   try {
-    const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json"
+    const openRouterResponse = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: `The product is ${title}. Brand: ${brand}, Price: ${price}, Shipping Fee: ${shipCost}, Shipping from ${shipFrom} to ${shipTo}, \
+                  Product Description: ${description}. Please send me your response in the pre-defined format. Add on any other statistics behind.`,
+      config: {
+        systemInstruction: 'RESPOND WITHIN 5 SECONDS given context below:\
+                              Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
+                              calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg to 2 decimal places of shipping based on distance estimated from shipping origin and destination, \
+                              and provide a good alternative of the product around the same price point (SGD) if there exists (include the price in SGD in the reasoning), and give me a reply in the following format: \
+                              CO2 Estimate: <number>kg. <reason>. \n\n Alternative: <string>. <reason>.\
+                              Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
+                              "Sorry, I cannot help you with such a query."',
       },
-      body: JSON.stringify({
-        // "model": "deepseek/deepseek-r1-0528:free",
-        "model": "google/gemini-2.0-flash-exp:free",
-        "messages": [
-          {
-            "role": 'system',
-            "content": [
-              {
-                "type": "text",
-                "text": "RESPOND WITHIN 5 SECONDS given context below:"
-              },
-              {
-                "type": "text",
-                "text": 'Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
-                      calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg to 2 decimal places of shipping based on distance estimated from shipping origin and destination, \
-                      and provide a good alternative of the product around the same price point (SGD) if there exists (include the price in SGD in the reasoning), and give me a reply in the following format: \
-                      CO2 Estimate: <number>kg. <reason>. \nAlternative: <string>. <reason>.\
-                      Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
-                      "Sorry, I cannot help you with such a query."',
-                "cache_control": {
-                  "type": "ephemeral"
-                }
-              }
-            ],
-          },
-          {
-            "role": "user",
-            "content": `The product is ${title}. Brand: ${brand}, Price: ${price}, Shipping Fee: ${shipCost}, Shipping from ${shipFrom} to ${shipTo}, \
-                         Product Description: ${description}. Please send me your response in the pre-defined format. Add on any other statistics behind.`
-          },
-        ],
-        "stream": true,
-        "reasoning": {
-          "effort": "low",
-          "exclude": true
-        }
-      })
     });
 
-    console.log(openRouterResponse);
+    let reply = openRouterResponse.text;
 
-    let reply = '';
-    const reader = openRouterResponse.body?.getReader();
-    if (!reader) throw new Error('Response body is not readable');
-    const decoder = new TextDecoder();
-    let buffer = '';
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        while (true) {
-          const lineEnd = buffer.indexOf('\n');
-          if (lineEnd === -1) break;
-          const line = buffer.slice(0, lineEnd).trim();
-          buffer = buffer.slice(lineEnd + 1);
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') break;
-            try {
-              const parsed = JSON.parse(data);
-              const content = parsed.choices[0].delta.content;
-              if (content) {
-                reply += content;
-                // DO NOT emit here!
-              }
-            } catch (e) { /* ignore */ }
-          }
-        }
-      }
-    } finally {
-      reader.cancel();
-    }
-    // Emit only the final reply
     console.log('Final reply:', reply);
     if (openRouterResponse.status === 429) {
       res.status(429).json({ reply: 'Too many requests.' });
@@ -143,93 +83,27 @@ app.post('/api/chat', async (req, res) => {
   const { previousContext, input } = req.body;
 
   try {
-    const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json"
+    const openRouterResponse = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: `My query is: ${input}`,
+      config: {
+        systemInstruction: `This was the context given for a chat between you and a user: \
+                            Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
+                            calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg of shipping based on distance estimated from shipping origin and destination, \
+                            and provide a good alternative of the product around the same price point (SGD) if there exists, and give me a reply in the following format: \
+                            CO2 Estimate: <number> <reason>, Alternative: <string> <reason>.\
+                            Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
+                            "Sorry, I cannot help you with such a query."\n\n\
+                            Below was the actual chat between you (llm) and the user (user)\n\n\
+                            ${previousContext}\n\n\
+                            The user is now going to ask you another question. Reasoning should be linked to sustainability before replying directly to the query, \
+                            ignoring the format provided in the context before. \
+                            Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
+                            \"Sorry, I cannot help you with such a query.\"`
       },
-      body: JSON.stringify({
-        // "model": "deepseek/deepseek-r1-0528:free",
-        "model": "google/gemini-2.0-flash-exp:free",
-        "messages": [
-          {
-            "role": 'system',
-            "content": [
-              {
-                "type": "text",
-                "text": "This was the context given for a chat between you and a user",
-                "cache_control": {
-                  "type": "ephemeral"
-                }
-              },
-              {
-                "type": "text",
-                "text": 'Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
-                      calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg of shipping based on distance estimated from shipping origin and destination, \
-                      and provide a good alternative of the product around the same price point (SGD) if there exists, and give me a reply in the following format: \
-                      CO2 Estimate: <number> <reason>, Alternative: <string> <reason>.\
-                      Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
-                      "Sorry, I cannot help you with such a query."\n\n\
-                      Below was the actual chat between you (llm) and the user (user)\n\n\
-                      ${previousContext}\n\n'
-              },
-              {
-                "type": "text",
-                "text": "The user is now going to ask you another question. Reasoning should be linked to sustainability before replying directly to the query, \
-                      ignoring the format provided in the context before. \
-                      Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
-                      \"Sorry, I cannot help you with such a query.\""
-              }
-            ],
-          },
-          {
-            "role": "user",
-            "content": `My query is: ${input}`
-          },
-        ],
-        "stream": true,
-        "reasoning": {
-          "effort": "low",
-          "exclude": true
-        }
-      })
     });
 
-    console.log(openRouterResponse);
-
-    let reply = '';
-    const reader = openRouterResponse.body?.getReader();
-    if (!reader) throw new Error('Response body is not readable');
-    const decoder = new TextDecoder();
-    let buffer = '';
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        while (true) {
-          const lineEnd = buffer.indexOf('\n');
-          if (lineEnd === -1) break;
-          const line = buffer.slice(0, lineEnd).trim();
-          buffer = buffer.slice(lineEnd + 1);
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') break;
-            try {
-              const parsed = JSON.parse(data);
-              const content = parsed.choices[0].delta.content;
-              if (content) {
-                reply += content;
-                // DO NOT emit here!
-              }
-            } catch (e) { /* ignore */ }
-          }
-        }
-      }
-    } finally {
-      reader.cancel();
-    }
+    let reply = openRouterResponse.text;
 
     console.log('Final reply:', reply);
     if (openRouterResponse.status === 429) {
