@@ -45,7 +45,7 @@ app.use(morgan(':method :url :status :response-time ms'));
 
 app.post('/api/product-info', async (req, res) => {
   const { brand, description, price, shipCost, shipFrom, shipTo, title } = req.body.product;
-  const { uuid } = req.body.uuid
+  const { uuid } = req.body;
 
   let additionalContext = ''
   if (brand in ratings) {

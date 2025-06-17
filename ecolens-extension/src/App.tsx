@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Content from './components/content/Content'
 import Footer from './components/footer/Footer'
 import Header from './components/header/Header'
@@ -25,7 +25,8 @@ function App() {
   };
 
   const footerShouldShow = true; // Replace with your actual condition
-  const uuid = crypto.randomUUID(); // For separate socket connections
+  const uuidRef = useRef(crypto.randomUUID()); // generates once and persists across renders
+  const uuid = uuidRef.current;
 
   return (
     <div id='app'>
