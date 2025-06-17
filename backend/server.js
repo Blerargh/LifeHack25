@@ -102,7 +102,7 @@ app.post('/api/product-info', async (req, res) => {
 
                             ${additionalContext === '' ? `Below is the sustainability rating summary provided by Good on You:\n${additionalContext}\n` : ''} \
 
-                            Return your analysis as a strict **JSON of array of 7 JSON objects and a string**, each following this interface:
+                            Return your analysis as a strict **JSON of array of 7 JSON objects "criterias" and a string "description"**, each following this interface:
 
                             \`\`\`ts
                             interface InfoReply {
@@ -111,7 +111,7 @@ app.post('/api/product-info', async (req, res) => {
                             }
                             interface SustainabilityInfo {
                               criteria: string;
-                              value: number; // a score out of 100 as well
+                              value: number; // the same number as score
                               score: number; // a score out of 100, higher is more sustainable
                             }
                             \`\`\`
