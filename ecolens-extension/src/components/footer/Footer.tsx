@@ -11,7 +11,7 @@ interface SustainabilityInfo {
 }
 
 interface FooterProps {
-  info: SustainabilityInfo[];
+  info: SustainabilityInfo[] | null;
 }
 
 const Footer: React.FC<FooterProps> = (props) => {
