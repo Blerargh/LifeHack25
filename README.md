@@ -2,7 +2,7 @@
 Submission for LifeHack 2025 - Team GSquad (ID: 1)
 
 # Release
-1. Download the release build < hyperlink >. If the link does not work, download the files directly from < path-link >
+1. Download the release build [Link 1](https://github.com/user-attachments/files/20779773/EcoLens.zip) [Link 2](https://github.com/Blerargh/LifeHack25/releases/download/v1.0/EcoLens.zip). If the link does not work, download the files directly from [Releases]https://github.com/Blerargh/LifeHack25/releases
 
 2. Go to `chrome://extensions/` and enable Developer Mode. An option to `Load Unpacked` should appear. 
 
