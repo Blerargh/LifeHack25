@@ -236,7 +236,15 @@ app.post('/api/chat', async (req, res) => {
       reader.cancel();
     }
 
-    res.status(200).json({ reply });
+    console.log('Final reply:', reply);
+    if (openRouterResponse.status === 429) {
+      res.status(429).json({ reply: 'Too many requests.' });
+      io.to(123).emit('updateReply', { reply: 'Too many requests.' });
+      return;
+    }
+
+    else res.status(200).json({ reply });
+    io.to(123).emit('updateReply', { reply });
   } catch (error) {
     console.error('Error sending to OpenRouter:', error.message);
     res.status(500).json({ error: 'Failed to get response from OpenRouter' });
