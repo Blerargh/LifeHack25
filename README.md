@@ -8,7 +8,7 @@ Submission for LifeHack 2025 - Team GSquad (ID: 1)
 
 ![Image of `chrome://extensions/` header](image.png)
 
-Link the `<folder-name>` folder and the extension is ready to be used on your browser.
+Extract and link the `EcoLens` folder and the extension is ready to be used on your browser.
 
 # Development
 1. Clone the GitHub repository
