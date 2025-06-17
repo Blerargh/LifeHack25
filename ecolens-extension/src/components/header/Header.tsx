@@ -58,8 +58,6 @@ const Header: React.FC<HeaderProps> = ({ onRefresh }) => {
           const message = data.reply;
           setAPIMessage(message)
           console.log(APIMessage);
-
-          // TODO: Process the response from OpenRouter and send to Footer
         }
 
       } catch (err) {
