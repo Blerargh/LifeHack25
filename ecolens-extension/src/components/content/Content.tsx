@@ -42,17 +42,26 @@ const Content: React.FC = () => {
 
   const handleSend = async () => {
     if (!input.trim()) return;
+
+    const previousMessages = [...messages]
+    const previousContext = previousMessages.map((chat) => chat.sender + ': ' + chat.text);
     setMessages(prev => [
       ...prev,
       { sender: 'user', text: input },
       { sender: 'llm', text: 'Give me a moment to reply...' }
     ]);
-    await fetch('http://localhost:8080/api/product-info', {
+
+    const response = await fetch('http://localhost:8080/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: input })
+      body: JSON.stringify({ previousContext, input })
     });
-    setInput('');
+
+    const data = await response.json();
+    setMessages([...previousMessages,
+      { sender: 'user', text: input },
+      { sender: 'llm', text: data.reply}
+    ]);
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

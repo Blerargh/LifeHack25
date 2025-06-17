@@ -89,6 +89,8 @@ app.post('/api/product-info', async (req, res) => {
       })
     });
 
+    console.log(openRouterResponse);
+
     let reply = '';
     const reader = openRouterResponse.body?.getReader();
     if (!reader) throw new Error('Response body is not readable');
@@ -124,6 +126,110 @@ app.post('/api/product-info', async (req, res) => {
     // Emit only the final reply
     io.to(123).emit('updateReply', { reply });
     console.log('Final reply:', reply);
+
+    res.status(200).json({ reply });
+  } catch (error) {
+    console.error('Error sending to OpenRouter:', error.message);
+    res.status(500).json({ error: 'Failed to get response from OpenRouter' });
+  }
+});
+
+app.post('/api/chat', async (req, res) => {
+  const { previousContext, input } = req.body;
+
+  try {
+    const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        // "model": "deepseek/deepseek-r1-0528:free",
+        "model": "google/gemini-2.0-flash-exp:free",
+        "messages": [
+          {
+            "role": 'system',
+            "content": [
+              {
+                "type": "text",
+                "text": "This was the context given for a chat between you and a user"
+              },
+              {
+                "type": "text",
+                "text": 'Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
+                      calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg of shipping based on distance estimated from shipping origin and destination, \
+                      and provide a good alternative of the product around the same price point (SGD) if there exists, and give me a reply in the following format: \
+                      CO2 Estimate: <number> <reason>, Alternative: <string> <reason>.\
+                      Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
+                      "Sorry, I cannot help you with such a query."',
+                // "cache_control": {
+                //   "type": "ephemeral"
+                // }
+              },
+              {
+                "type": "text",
+                "text": 'Below was the actual chat between you (llm) and the user (user)',
+              },
+              {
+                "type": "text",
+                "text": previousContext
+              },
+              {
+                "type": "text",
+                "text": 'The user is going to ask you another question. Reasoning should be linked to sustainability before replying. \
+                      Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
+                      "Sorry, I cannot help you with such a query."',
+              }
+            ],
+          },
+          {
+            "role": "user",
+            "content": `My query is: ${input}`
+          },
+        ],
+        "stream": true,
+        "reasoning": {
+          "effort": "low",
+          "exclude": true
+        }
+      })
+    });
+
+    console.log(openRouterResponse);
+
+    let reply = '';
+    const reader = openRouterResponse.body?.getReader();
+    if (!reader) throw new Error('Response body is not readable');
+    const decoder = new TextDecoder();
+    let buffer = '';
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        while (true) {
+          const lineEnd = buffer.indexOf('\n');
+          if (lineEnd === -1) break;
+          const line = buffer.slice(0, lineEnd).trim();
+          buffer = buffer.slice(lineEnd + 1);
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') break;
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices[0].delta.content;
+              if (content) {
+                reply += content;
+                // DO NOT emit here!
+              }
+            } catch (e) { /* ignore */ }
+          }
+        }
+      }
+    } finally {
+      reader.cancel();
+    }
 
     res.status(200).json({ reply });
   } catch (error) {
