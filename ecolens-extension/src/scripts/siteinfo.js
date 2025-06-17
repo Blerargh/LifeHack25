@@ -81,7 +81,9 @@
       let minShipCost = Number.MAX_VALUE;
       for (let heading of shipCostHeadings) {
         if (parseFloat(heading.textContent.trim().slice(1)) < minShipCost) minShipCost = parseFloat(heading.textContent.trim().slice(1));
+        if (heading.textContent === "Free") minShipCost = 0;
       }
+      if (minShipCost === Number.MAX_VALUE) minShipCost = 0;
       shipCost = minShipCost;
     }
 
