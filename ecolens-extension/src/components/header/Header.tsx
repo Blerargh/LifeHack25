@@ -56,7 +56,6 @@ const Header: React.FC<HeaderProps> = ({ onRefresh }) => {
 
         if (res.ok) {
           const message = data.reply;
-          message.trim();
           setAPIMessage(message)
           console.log(APIMessage);
 

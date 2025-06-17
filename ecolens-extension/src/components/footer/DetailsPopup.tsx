@@ -9,44 +9,45 @@ import 'react-circular-progressbar/dist/styles.css';
 interface SustainabilityInfo {
   criteria: string;
   value: number;
-  progressBar: number; // Out of 100
-  color: string; // Hex info
+  score: number; // Out of 100
 }
 
 interface Props {
-  info: SustainabilityInfo[] | [];
+  info: SustainabilityInfo[];
   description: string | 'Unable to Retrieve Information';
-  setShowPopup: (showPopup: boolean) => void; 
+  setShowPopup: (showPopup: boolean) => void;
 }
+
+const getColor = (score: number): string => {
+  if (score >= 70) return '#4CAF50';
+  if (score >= 50) return '#FFEB3B';
+  if (score >= 30) return '#FF9800';
+  return '#F44336';
+};
 
 const DetailsPopup: React.FC<Props> = (props) => {
   const { info, description, setShowPopup } = props
-  const getSeverityColor = (value: number) => {
-    if (value < 33) return '#34C759';   // Red
-    if (value < 66) return '#FFD60A';   // Yellow
-    return '#FF3B30';                   // Green
-  }
 
   return (
-    <motion.div 
+    <motion.div
       className='details-popup-container'
       initial={{ y: 500 }}
       animate={{ y: 0, transition: { duration: 0.4 } }}
     >
       <div className='show-more-header'>
         <h3>Detailed Analysis</h3>
-        <IoMdCloseCircle className='close-button' onClick={() => setShowPopup(false)}/>
+        <IoMdCloseCircle className='close-button' onClick={() => setShowPopup(false)} />
       </div>
       <div className='show-more-info-container'>
         <div className='popup-bar-items-container'>
-          {info.map((displayInfo) => (
-            <div className='popup-bar-item'>
+          {info.map((displayInfo, idx) => (
+            <div className='bar-item' key={idx}>
               <CircularProgressbar
                 className='progress-bar'
-                value={displayInfo.progressBar}
+                value={displayInfo.score}
                 text={`${displayInfo.value}`}
                 styles={buildStyles({
-                  pathColor: getSeverityColor(displayInfo.progressBar),
+                  pathColor: getColor(displayInfo.score),
                   textColor: '#fff',
                 })}
               />

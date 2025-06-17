@@ -27,7 +27,7 @@ function App() {
     <div id='app'>
       <Header onRefresh={handleRefresh} />
       <Content resetCounter={resetCounter} productInfo={productInfo} />
-      <Footer info={null}/>
+      <Footer />
     </div>
   )
 }

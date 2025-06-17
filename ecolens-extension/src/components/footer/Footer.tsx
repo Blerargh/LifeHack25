@@ -1,102 +1,91 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../../styles/footer.css'
 import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import DetailsPopup from './DetailsPopup';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:5000');
 
 interface SustainabilityInfo {
   criteria: string;
   value: number;
-  progressBar: number; // Out of 100
-  color: string; // Hex info
+  score: number; // Out of 100
 }
 
-interface FooterProps {
-  info: SustainabilityInfo[] | null;
+interface InfoReply {
+  criterias: SustainabilityInfo[];
+  description: string;
 }
 
-const Footer: React.FC<FooterProps> = (props) => {
+const getColor = (score: number): string => {
+  if (score >= 70) return '#4CAF50';
+  if (score >= 50) return '#FFEB3B';
+  if (score >= 30) return '#FF9800';
+  return '#F44336';
+};
+
+const Footer: React.FC = () => {
+
+  const [info, setInfo] = useState<InfoReply>();
+
+  useEffect(() => {
+    socket.emit('join', 123);
+
+    // Replace with actual product info if available
+    // fetch('http://localhost:5000/api/product-info', ...);
+
+    socket.on('footerReply', (data) => {
+      setInfo(data.reply);
+      console.log(data);
+    });
+
+    return () => {
+      socket.emit('leave', 123);
+      socket.off('footerReply');
+    };
+  }, []);
 
   const [showMore, setShowMore] = useState<boolean>(false)
-  const handleShowMoreClick = () => {
-    setShowMore(true);
-  }
 
+  if (!info) return null;
 
-  let { info } = props
-
-  // for testing (to be removed)
-  info = [
-    {
-      criteria: 'test1',
-      value: 100,
-      progressBar: 90, // Out of 100
-      color: '#fff' // Hex info
-    },
-    {
-      criteria: 'test2',
-      value: 10023,
-      progressBar: 30, // Out of 100
-      color: '#fff' // Hex info
-    },
-    {
-      criteria: 'test2',
-      value: 10023,
-      progressBar: 50, // Out of 100
-      color: '#fff' // Hex info
-    },
-    {
-      criteria: 'test2',
-      value: 10023,
-      progressBar: 70, // Out of 100
-      color: '#fff' // Hex info
-    },
-    {
-      criteria: 'test2',
-      value: 10023,
-      progressBar: 10, // Out of 100
-      color: '#fff' // Hex info
-    },
-    {
-      criteria: 'test2',
-      value: 10023,
-      progressBar: 90, // Out of 100
-      color: '#fff' // Hex info
-    }
-  ]
-  const previewDisplay = info.length > 2 ? info.slice(0, 2) : info;
-
-  const getSeverityColor = (value: number) => {
-    if (value < 33) return '#34C759';   // Red
-    if (value < 66) return '#FFD60A';   // Yellow
-    return '#FF3B30';                   // Green
-  }
+  const previewDisplay = info.criterias.slice(0, 2);
+  const extraDisplay = info.criterias.slice(2);
 
   return (
     <>
-      {showMore ? <DetailsPopup info={info} description={'lorem ipsum'} setShowPopup={setShowMore}/> : <></>}
-      <div className='footer-container'>
-        <div className='bar-items-container'>
-          {previewDisplay.map((displayInfo) => (
-            <div className='bar-item'>
+      {showMore && (
+        <DetailsPopup
+          info={extraDisplay}
+          description={info.description}
+          setShowPopup={setShowMore}
+        />
+      )}
+      <div className="footer-container">
+        <div className="bar-items-container">
+          {previewDisplay.map((item, idx) => (
+            <div className="bar-item" key={idx}>
               <CircularProgressbar
-                className='progress-bar'
-                value={displayInfo.progressBar}
-                text={`${displayInfo.value}`}
+                value={item.score}
+                text={`${item.value}`}
                 styles={buildStyles({
-                  pathColor: getSeverityColor(displayInfo.progressBar),
+                  pathColor: getColor(item.score),
                   textColor: '#fff',
                 })}
               />
-              <p className='bar-item-text'>{displayInfo.criteria}</p>
+              <p className="bar-item-text">{item.criteria}</p>
             </div>
           ))}
         </div>
-        <button className='show-more-button' onClick={handleShowMoreClick}>Show more →</button>
+        {extraDisplay.length > 0 && (
+          <button className="show-more-button" onClick={() => setShowMore(true)}>
+            Show more →
+          </button>
+        )}
       </div>
     </>
-    
-  )
-}
+  );
+};
 
 export default Footer

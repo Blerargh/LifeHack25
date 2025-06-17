@@ -47,14 +47,14 @@ app.post('/api/product-info', async (req, res) => {
   }
 
   try {
-    const openRouterResponse = await ai.models.generateContent({
+    let openRouterResponse = await ai.models.generateContent({
       model: "gemini-2.0-flash",
       contents: `The product is ${title}. Brand: ${brand}, Price: ${price}, Shipping Fee: ${shipCost}, Shipping from ${shipFrom} to ${shipTo}, \
                   Product Description: ${description}. Please send me your response in the pre-defined format. Add on any other statistics behind.`,
       config: {
         systemInstruction: 'RESPOND WITHIN 5 SECONDS given context below:\
                               Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
-                              calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg to 2 decimal places of shipping based on distance estimated from shipping origin and destination, \
+                              calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg to 2 decimal places of shipping based on distance estimated from shipping origin and destination as well as the estimated weight of the product, \
                               and provide a good alternative of the product around the same price point (SGD) if there exists (include the price in SGD in the reasoning), and give me a reply in the following format: \
                               CO2 Estimate: <number>kg. <reason>. \n\n Alternative: <string>. <reason>.\
                               Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
@@ -70,8 +70,70 @@ app.post('/api/product-info', async (req, res) => {
       io.to(123).emit('updateReply', { reply: 'Too many requests.' });
       return;
     } else {
-      res.status(200).json({ reply });
       io.to(123).emit('updateReply', { reply });
+    }
+
+    openRouterResponse = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: `The product is ${title}. Brand: ${brand}, Price: ${price}, Shipping Fee: ${shipCost}, Shipping from ${shipFrom} to ${shipTo}, \
+                  Product Description: ${description}. Please send me your response in the pre-defined format. Add on any other statistics behind.`,
+      config: {
+        systemInstruction: `You are a sustainability assistant. Analyze the provided product based on the following **7 sustainability criteria**:
+
+                            1. Carbon Footprint – Measures total greenhouse gas emissions over the product’s lifecycle.
+                            2. Material Sustainability – Evaluates the use of renewable, recycled, or biodegradable materials.
+                            3. Energy Efficiency – Assesses the energy used during production and product usage.
+                            4. Packaging Waste – Looks at the sustainability of packaging materials and waste generated.
+                            5. Labor Practices – Checks for ethical and fair labor practices.
+                            6. Water Usage – Measures the amount of water used in production.
+                            7. End-of-Life Disposal – Considers ease of recycling, biodegradability, or reuse potential.
+
+                            Return your analysis as a strict **JSON of array of 7 JSON objects and a string**, each following this interface:
+
+                            \`\`\`ts
+                            interface InfoReply {
+                              criterias: SustainabilityInfo[];
+                              description: string;
+                            }
+                            interface SustainabilityInfo {
+                              criteria: string;
+                              value: number; // a score out of 100 as well
+                              score: number; // a score out of 100, higher is more sustainable
+                            }
+                            \`\`\`
+
+                            - Use **exactly** these key names: \`criteria\`, \`value\`, \`score\`.
+                            - Only output a raw JSON array. Do NOT use markdown code blocks (like \`\`\`  \`\`\`json). No text or explanation outside the array.
+                            - If no product information provided, all values and scores should be 0.
+
+                            THINK CAREFULLY, YOUR RESPONSE SHOULD NOT CHANGE AND SHOULD NOT BE 0 IF PRODUCT IS VALID.`,
+      },
+    });
+
+    let rawText = openRouterResponse.text.trim();
+
+    // Remove ```json or ``` if present
+    if (rawText.startsWith("```")) {
+      rawText = rawText.replace(/```json|```/g, "").trim();
+    }
+
+    try {
+      reply = JSON.parse(rawText);
+    } catch (err) {
+      console.error('Invalid JSON returned:', openRouterResponse.text);
+      io.to(123).emit('footerReply', { reply: 'Model returned invalid data.' });
+      res.status(500).json({ reply: 'Model returned invalid data.' });
+      return;
+    }
+
+    console.log('Footer reply:', reply);
+    if (openRouterResponse.status === 429) {
+      io.to(123).emit('updateReply', { reply: 'Too many requests.' });
+      res.status(429).json({ reply: 'Too many requests.' });
+      return;
+    } else {
+      io.to(123).emit('footerReply', { reply });
+      res.status(200).json({ reply });
     }
   } catch (error) {
     console.error('Error sending to OpenRouter:', error.message);
@@ -89,7 +151,7 @@ app.post('/api/chat', async (req, res) => {
       config: {
         systemInstruction: `This was the context given for a chat between you and a user: \
                             Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
-                            calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg of shipping based on distance estimated from shipping origin and destination, \
+                            calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg of shipping based on distance estimated from shipping origin and destination as well as the estimated weight of the product, \
                             and provide a good alternative of the product around the same price point (SGD) if there exists, and give me a reply in the following format: \
                             CO2 Estimate: <number> <reason>, Alternative: <string> <reason>.\
                             Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
