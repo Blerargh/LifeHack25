@@ -1,7 +1,35 @@
 .footer-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+
+  align-items: center;
+  justify-content: space-between;
 
   height: 30%;
   width: 100%;
+  margin-top: 10px;
+}
+
+.bar-items-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 70%;
+}
+
+.bar-item {
+  height: 100px;
+  width: 100px;
+  padding: 10px;
+}
+
+.progress-bar {
+  object-fit: scale-down !important;
+}
+
+.show-more-button {
+  margin-right: 10px;
+  height: 50px;
+  background-color: green;
 }
