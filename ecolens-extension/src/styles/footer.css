@@ -5,25 +5,39 @@
   align-items: center;
   justify-content: space-between;
 
-  height: 35%;
-  border-radius: 10px;
+  height: 170px; /* Increased height for bigger bars */
+  border-radius: 0 0 12px 12px;
   width: 100%;
-  margin-top: 10px;
-  background-color: gray;
+  background: rgba(30, 81, 54, 0.7); /* Match header */
+  box-shadow: 0 2px 12px rgba(30,81,54,0.08);
+  overflow: hidden; /* Prevents content from making it taller */
+  box-sizing: border-box;
+  padding: 0 18px;
 }
 
 .bar-items-container {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-evenly;
-  width: 70%;
+  gap: 12px;
+  flex: 1;
 }
 
 .bar-item {
-  height: 100px;
-  width: 100px;
-  padding: 10px;
+  display: flex;
+  flex-direction: row;      /* Change from column to row */
+  align-items: center;
+  justify-content: center;
+  height: 120px;            /* Uniform, bigger */
+  min-width: 120px;
+  gap: 4px;
+}
+
+.bar-item .CircularProgressbar {
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 70px;
+  min-height: 70px;
 }
 
 .progress-bar {
@@ -31,17 +45,53 @@
 }
 
 .show-more-button {
-  margin-right: 10px;
-  height: 50px;
-  background-color: green;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  cursor: pointer;
+  transition: background 0.18s, box-shadow 0.18s;
+  margin-left: 0px;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.10);
+  letter-spacing: 0.2px;
+  line-height: 1.1;
+  align-self: center;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+}
+
+.show-more-button span {
+  display: block;
+  width: 100%;
 }
 
 .show-more-button:hover {
-  scale:calc(1.05);
-  background-color: rgb(10, 122, 10);
-  transition: background-color 0.2s scale 0.2s
-} 
+  background: #1565c0;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.18);
+}
 
 .show-more-button:active {
   background-color: rgb(14, 92, 14);
-} 
+}
+
+.bar-item-text {
+  color: #e0ffe0;
+  font-size: 0.78rem;   /* Smaller text */
+  text-align: center;
+  margin: 0 0 0 2px;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  white-space: normal;
+  line-height: 1.1;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

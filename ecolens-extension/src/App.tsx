@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Content from './components/content/Content'
 import Footer from './components/footer/Footer'
 import Header from './components/header/Header'
+import TitleBar from './components/titlebar/TitleBar';
 import './styles/App.css'
 
 interface Product {
@@ -23,11 +24,30 @@ function App() {
     setProductInfo(product);
   };
 
+  const footerShouldShow = true; // Replace with your actual condition
+
   return (
     <div id='app'>
+      <TitleBar />
       <Header onRefresh={handleRefresh} />
       <Content resetCounter={resetCounter} productInfo={productInfo} />
-      <Footer />
+      {footerShouldShow ? (
+        <Footer />
+      ) : (
+        <div
+          className="footer-placeholder"
+          style={{
+            height: 120, // Same as .footer-container
+            width: '100%',
+            background: 'transparent', // or a subtle loading bg
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <span style={{ color: '#888', fontSize: 16 }}>Loading footer...</span>
+        </div>
+      )}
     </div>
   )
 }

@@ -86,7 +86,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
     const msg = input;
     setInput('');
 
-    const response = await fetch('http://localhost:5000/api/chat', {
+    const response = await fetch('http://localhost:5050/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ previousContext, input: msg })
@@ -107,7 +107,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
 
   return (
     <div className="content-container" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div className="chat-history" style={{ overflowY: 'auto', marginBottom: 8, height: '90%', maxHeight: '100%', wordWrap: 'break-word' }}>
+      <div className="chat-history" style={{ flex: 1, overflowY: 'auto', marginBottom: 8 }}>
         {messages.map((msg, idx) => (
           <div
             key={idx}
@@ -123,7 +123,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
               alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start'
             }}
           >
-            {(<ReactMarkdown>{msg.text}</ReactMarkdown>)}
+            <ReactMarkdown>{msg.text}</ReactMarkdown>
           </div>
         ))}
         <div ref={chatEndRef} />

@@ -41,7 +41,8 @@ const DetailsPopup: React.FC<Props> = (props) => {
       <div className='show-more-info-container'>
         <div className='popup-bar-items-container'>
           {info.map((displayInfo, idx) => (
-            <div className='bar-item' key={idx}>
+            <div className='popup-bar-item' key={idx}>
+              <p className='bar-item-text'>{displayInfo.criteria}</p>
               <CircularProgressbar
                 className='progress-bar'
                 value={displayInfo.score}
@@ -51,7 +52,6 @@ const DetailsPopup: React.FC<Props> = (props) => {
                   textColor: '#fff',
                 })}
               />
-              <p className='bar-item-text'>{displayInfo.criteria}</p>
             </div>
           ))}
         </div>

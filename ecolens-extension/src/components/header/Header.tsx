@@ -82,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({ onRefresh }) => {
 
   return (
     <div className='header-container'>
-      <span style={{ marginRight: 8, color: "#222", fontWeight: 500 }}>Product Name:</span>
+      <span>Product Name:</span>
       <div
         className='product-details product-details-dark'
         title={productTitle.length > 24 ? productTitle : ""}
@@ -94,10 +94,9 @@ const Header: React.FC<HeaderProps> = ({ onRefresh }) => {
           className="show-full-btn"
           onClick={() => setShowFull(true)}
         >
-          Show Full Name
+          Full Name
         </button>
       )}
-      <button onClick={handleClick} style={{ marginLeft: 8 }}>Refresh</button>
     </div>
   )
 }

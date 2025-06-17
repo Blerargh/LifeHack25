@@ -5,7 +5,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import DetailsPopup from './DetailsPopup';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:5000');
+const socket = io('http://localhost5000');
 
 interface SustainabilityInfo {
   criteria: string;
@@ -48,7 +48,13 @@ const Footer: React.FC = () => {
 
   const [showMore, setShowMore] = useState<boolean>(false)
 
-  if (!info) return null;
+  if (!info) {
+    return (
+      <div className="footer-container" style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+        <span style={{ color: '#888', fontSize: 16 }}>Loading Sustainability Score...</span>
+      </div>
+    );
+  }
 
   const previewDisplay = info.criterias.slice(0, 2);
   const extraDisplay = info.criterias.slice(2);
@@ -58,29 +64,35 @@ const Footer: React.FC = () => {
       {showMore && (
         <DetailsPopup
           info={extraDisplay}
-          description={info.description}
+          description={info?.description ?? ''}
           setShowPopup={setShowMore}
         />
       )}
       <div className="footer-container">
-        <div className="bar-items-container">
-          {previewDisplay.map((item, idx) => (
-            <div className="bar-item" key={idx}>
-              <CircularProgressbar
-                value={item.score}
-                text={`${item.value}`}
-                styles={buildStyles({
-                  pathColor: getColor(item.score),
-                  textColor: '#fff',
-                })}
-              />
-              <p className="bar-item-text">{item.criteria}</p>
-            </div>
-          ))}
-        </div>
-        {extraDisplay.length > 0 && (
+        {info ? (
+          <div className="bar-items-container">
+            {previewDisplay.map((item, idx) => (
+              <div className="bar-item" key={idx}>
+                <CircularProgressbar
+                  value={item.score}
+                  text={`${item.value}`}
+                  styles={buildStyles({
+                    pathColor: getColor(item.score),
+                    textColor: '#fff',
+                  })}
+                />
+                <p className="bar-item-text">{item.criteria}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          // Placeholder to keep layout stable
+          <div className="bar-items-container" />
+        )}
+        {info && extraDisplay.length > 0 && (
           <button className="show-more-button" onClick={() => setShowMore(true)}>
-            Show more →
+            <span>Show</span>
+            <span>More</span>
           </button>
         )}
       </div>

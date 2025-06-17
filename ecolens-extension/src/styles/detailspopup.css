@@ -24,27 +24,73 @@ h3 {
   justify-content: space-evenly;
   overflow-x: auto;
   overflow-y: hidden;
-  margin-top: 20px;
-  gap: 16px;
+  margin-top: 10px;
+  gap: 12px;
   padding: 0 12px;   
   scroll-behavior: smooth;
+  margin-bottom: 16px;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
 
 .popup-bar-item {
   flex-shrink: 0;
-  height: 125px;
-  width: 120px;
+  height: 100px;
+  width: 96px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end; /* Align items to the bottom */
 }
 
 .progress-bar {
-  object-fit: scale-down !important;
+  width: 60px !important;   /* Fixed, uniform size for all bars */
+  height: 60px !important;
+  min-width: 60px !important;
+  min-height: 60px !important;
+  max-width: 60px !important;
+  max-height: 60px !important;
+  display: block;
+  margin: 0 auto;
 }
 
 .popup-description {
   border: 1px solid white;
   margin: 5px;
   padding-bottom: 20px;
+}
+
+.bar-item-text {
+  color: #fff;
+  font-size: 0.82rem;
+  text-align: center;
+  margin: 0 0 6px 0;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  white-space: normal;
+  line-height: 1.2;
+  max-width: 90px;
+  min-height: 32px; /* Reserve space for up to 2 lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.details-popup-container {
+  background: #10281e !important; /* Darker green */
+  color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(16,40,30,0.25);
+  padding: 24px 18px 18px 18px;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  margin-top: 60px;
+}
+
+.details-popup-container h3,
+.details-popup-container,
+.popup-description,
+.bar-item-text {
+  color: #fff;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
 }
