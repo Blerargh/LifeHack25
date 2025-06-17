@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../../styles/header.css'
 
 interface Product {
@@ -68,6 +68,10 @@ const Header: React.FC<HeaderProps> = ({ onRefresh }) => {
       }
     }
   }
+
+  useEffect(() => {
+    handleClick();
+  }, []);
 
   // If showFull, show only the product name in a large, centered box
   if (showFull && productTitle) {

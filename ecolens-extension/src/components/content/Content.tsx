@@ -51,7 +51,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
     socket.emit('join', 123);
 
     // Replace with actual product info if available
-    // fetch('http://localhost:8080/api/product-info', ...);
+    // fetch('http://localhost:5000/api/product-info', ...);
 
     socket.on('updateReply', (data) => {
       setMessages(prev => [
@@ -83,22 +83,24 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
       { sender: 'llm', text: 'Give me a moment to reply...' }
     ]);
 
+    const msg = input;
+    setInput('');
+
     const response = await fetch('http://localhost:5000/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ previousContext, input })
+      body: JSON.stringify({ previousContext, input: msg })
     });
 
     const data = await response.json();
     setMessages([...previousMessages,
-    { sender: 'user', text: input },
+    { sender: 'user', text: msg },
     { sender: 'llm', text: data.reply }
     ]);
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      setInput('');
       handleSend();
     }
   };
