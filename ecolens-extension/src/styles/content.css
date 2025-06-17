@@ -38,3 +38,32 @@
   pointer-events: none;
   z-index: 2;
 }
+
+.content-container .chat-history {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #1976d2 #f1f1f1;
+}
+
+.content-container .chat-history::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content-container .chat-history::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.content-container .chat-history::-webkit-scrollbar-thumb {
+  background-color: #1976d2;
+  border-radius: 10px;
+  border: 2px solid #f1f1f1;
+}
+
+.content-container .chat-history::-webkit-scrollbar-thumb:hover {
+  background-color: #1565c0;
+}
+
+.content-container .chat-history::-webkit-scrollbar-button {
+  display: none;
+}

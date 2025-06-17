@@ -23,13 +23,37 @@ h3 {
   flex-direction: row;
   justify-content: space-evenly;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
   margin-top: 10px;
   gap: 12px;
-  padding: 0 12px;   
+  padding: 0 12px 12px 12px;
   scroll-behavior: smooth;
-  margin-bottom: 16px;
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  margin-bottom: 25px;
+  scrollbar-width: thin;
+  scrollbar-color: #1976d2 #f1f1f1;
+}
+
+.popup-bar-items-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.popup-bar-items-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.popup-bar-items-container::-webkit-scrollbar-thumb {
+  background-color: #1976d2;
+  border-radius: 10px;
+  border: 2px solid #f1f1f1;
+}
+
+.popup-bar-items-container::-webkit-scrollbar-thumb:hover {
+  background-color: #1565c0;
+}
+
+.popup-bar-items-container::-webkit-scrollbar-button {
+  display: none;
 }
 
 .popup-bar-item {
@@ -39,11 +63,13 @@ h3 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end; /* Align items to the bottom */
+  justify-content: flex-end;
+  /* Align items to the bottom */
 }
 
 .progress-bar {
-  width: 60px !important;   /* Fixed, uniform size for all bars */
+  width: 60px !important;
+  /* Fixed, uniform size for all bars */
   height: 60px !important;
   min-width: 60px !important;
   min-height: 60px !important;
@@ -57,6 +83,36 @@ h3 {
   border: 1px solid white;
   margin: 5px;
   padding-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #1976d2 #f1f1f1;
+  height: 200px;
+  max-height: 200px;
+}
+
+.popup-description::-webkit-scrollbar {
+  width: 6px;
+}
+
+.popup-description::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.popup-description::-webkit-scrollbar-thumb {
+  background-color: #1976d2;
+  border-radius: 10px;
+  border: 2px solid #f1f1f1;
+}
+
+.popup-description::-webkit-scrollbar-thumb:hover {
+  background-color: #1565c0;
+}
+
+.popup-description::-webkit-scrollbar-button {
+  display: none;
 }
 
 .bar-item-text {
@@ -68,7 +124,8 @@ h3 {
   white-space: normal;
   line-height: 1.2;
   max-width: 90px;
-  min-height: 32px; /* Reserve space for up to 2 lines */
+  min-height: 32px;
+  /* Reserve space for up to 2 lines */
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-word;
@@ -78,10 +135,11 @@ h3 {
 }
 
 .details-popup-container {
-  background: #10281e !important; /* Darker green */
+  background: #10281e !important;
+  /* Darker green */
   color: #fff;
   border-radius: 16px;
-  box-shadow: 0 4px 32px rgba(16,40,30,0.25);
+  box-shadow: 0 4px 32px rgba(16, 40, 30, 0.25);
   padding: 24px 18px 18px 18px;
   font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
   margin-top: 60px;

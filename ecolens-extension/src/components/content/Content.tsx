@@ -3,7 +3,7 @@ import '../../styles/content.css';
 import { io } from 'socket.io-client';
 import ReactMarkdown from 'react-markdown'
 
-const socket = io('http://localhost:5000');
+const socket = io('https://lifehack25.onrender.com');
 
 type Message = {
   sender: 'user' | 'llm';
@@ -51,7 +51,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
     socket.emit('join', 123);
 
     // Replace with actual product info if available
-    // fetch('http://localhost:5000/api/product-info', ...);
+    // fetch('http://localhost/api/product-info', ...);
 
     socket.on('updateReply', (data) => {
       setMessages(prev => [
@@ -86,7 +86,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
     const msg = input;
     setInput('');
 
-    const response = await fetch('http://localhost:5050/api/chat', {
+    const response = await fetch('https://lifehack25.onrender.com/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ previousContext, input: msg })

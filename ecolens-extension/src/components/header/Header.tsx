@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../../styles/header.css'
+import { IoMdCloseCircle } from 'react-icons/io';
 
 interface Product {
   brand: string;
@@ -44,7 +45,7 @@ const Header: React.FC<HeaderProps> = ({ onRefresh }) => {
     // Backend Sending here
     if (title) {
       try {
-        const res = await fetch('http://localhost:5000/api/product-info', {
+        const res = await fetch('https://lifehack25.onrender.com/api/product-info', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -74,7 +75,8 @@ const Header: React.FC<HeaderProps> = ({ onRefresh }) => {
   if (showFull && productTitle) {
     return (
       <div className="full-product-name-modal">
-        <button className="close-full-btn" onClick={() => setShowFull(false)}>✕</button>
+        {/* <button className="close-full-btn" onClick={() => setShowFull(false)}>✕</button> */}
+        <IoMdCloseCircle className='close-button' onClick={() => setShowFull(false)} />
         <div className="full-product-name-text">{productTitle}</div>
       </div>
     );
