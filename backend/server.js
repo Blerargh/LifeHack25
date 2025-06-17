@@ -150,41 +150,26 @@ app.post('/api/chat', async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        // "model": "deepseek/deepseek-r1-0528:free",
-        "model": "google/gemini-2.0-flash-exp:free",
+        "model": "deepseek/deepseek-r1-0528:free",
+        // "model": "google/gemini-2.0-flash-exp:free",
         "messages": [
           {
             "role": 'system',
             "content": [
               {
                 "type": "text",
-                "text": "This was the context given for a chat between you and a user"
-              },
-              {
-                "type": "text",
-                "text": 'Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
+                "text": `This was the context given for a chat between you and a user\n\n\
+                      Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
                       calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg of shipping based on distance estimated from shipping origin and destination, \
                       and provide a good alternative of the product around the same price point (SGD) if there exists, and give me a reply in the following format: \
                       CO2 Estimate: <number> <reason>, Alternative: <string> <reason>.\
                       Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
-                      "Sorry, I cannot help you with such a query."',
-                // "cache_control": {
-                //   "type": "ephemeral"
-                // }
-              },
-              {
-                "type": "text",
-                "text": 'Below was the actual chat between you (llm) and the user (user)',
-              },
-              {
-                "type": "text",
-                "text": previousContext
-              },
-              {
-                "type": "text",
-                "text": 'The user is going to ask you another question. Reasoning should be linked to sustainability before replying. \
+                      "Sorry, I cannot help you with such a query."\n\n\
+                      Below was the actual chat between you (llm) and the user (user)\n\n\
+                      ${previousContext}\n\n\
+                      The user is going to ask you another question. Reasoning should be linked to sustainability before replying. \
                       Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
-                      "Sorry, I cannot help you with such a query."',
+                      "Sorry, I cannot help you with such a query.`
               }
             ],
           },
