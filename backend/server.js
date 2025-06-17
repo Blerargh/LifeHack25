@@ -55,8 +55,8 @@ app.post('/api/product-info', async (req, res) => {
         systemInstruction: 'RESPOND WITHIN 5 SECONDS given context below:\
                               Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
                               calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg to 2 decimal places of shipping based on distance estimated from shipping origin and destination as well as the estimated weight of the product, \
-                              and provide a good alternative of the product around the same price point (SGD) if there exists (include the price in SGD in the reasoning), and give me a reply in the following format: \
-                              CO2 Estimate: <number>kg. <reason>. \n\n Alternative: <string>. <reason>.\
+                              and provide a good alternative of the product around the same price point (SGD) if there exists (include the price in SGD in the reasoning), and give me a reply in the following markdown format: \
+                              ### CO2 Estimate: <number>kg.\n<reason>. \n\n ### Alternative: <string>.\n <reason>.\
                               Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
                               "Sorry, I cannot help you with such a query."',
       },

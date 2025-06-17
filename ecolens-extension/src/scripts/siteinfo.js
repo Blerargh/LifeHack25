@@ -22,10 +22,10 @@
     shipCost = document.querySelector('[data-csa-c-delivery-price]')?.getAttribute('data-csa-c-delivery-price') ?? 'FREE';
     shipCost = shipCost === 'FREE' ? 0 : parseFloat(shipCost.slice(2));
 
-    brand = document.getElementById('bylineInfo').innerText.slice(7);
+    brand = document.getElementById('bylineInfo')?.innerText.slice(7) ?? '';
 
-    description = Array.from(document.getElementById('feature-bullets').querySelectorAll('.a-list-item')).map((e) => e.innerText.trim()).join('\n');
-
+    description = Array.from(document.getElementById('feature-bullets')?.querySelectorAll('.a-list-item') ?? []).map((e) => e.innerText.trim()).join('\n');
+  
   } else if (location.hostname.includes('shopee.')) {
     // Shopee: use stable attribute, then h1, then fallback to document title
     let titleEl = document.querySelector('[data-sqe="name"]')
@@ -92,5 +92,7 @@
     if (description === '') description = Array.from(document.querySelectorAll('.pdp-product-desc')).map((e) => e.innerText.trim()).join('\n');
   }
 
-  return { title, shipFrom, shipTo, price, shipCost, brand, description } || 'No product found';
+  const result = { title, shipFrom, shipTo, price, shipCost, brand, description } 
+  console.log(result);
+  return result || 'No product found';
 })();
