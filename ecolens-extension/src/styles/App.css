@@ -11,3 +11,16 @@
   height: 500px;
   width: 500px;
 }
+
+.details-popup-container {
+  position: fixed;
+  left: 10;
+  right: 10;
+  bottom: 0;
+  height: 470px;
+  width: 475px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  background: green;
+  z-index: 10;
+}

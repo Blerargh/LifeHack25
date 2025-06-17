@@ -1,0 +1,31 @@
+.show-more-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid white;
+  margin: 3px 10px;
+}
+
+h3 {
+  font-size: 1.1rem;
+}
+
+.close-button {
+  position: absolute;
+  right: 25px;
+  font-size: large;
+  cursor: pointer;
+}
+
+.popup-bar-items-container {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+}
+
+.popup-description {
+  border: 1px solid white;
+  margin: 5px;
+  padding-bottom: 20px;
+}
