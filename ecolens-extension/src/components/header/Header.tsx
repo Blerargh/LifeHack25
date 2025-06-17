@@ -14,9 +14,10 @@ interface Product {
 
 interface HeaderProps {
   onRefresh: (product: Product | null) => void;
+  uuid: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ onRefresh }) => {
+const Header: React.FC<HeaderProps> = ({ onRefresh, uuid }) => {
   const [productTitle, setProductTitle] = useState<string>('');
   const [showFull, setShowFull] = useState<boolean>(false);
   const [APIMessage, setAPIMessage] = useState<string>('');
@@ -50,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ onRefresh }) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ product }),
+          body: JSON.stringify({ product, uuid }),
         });
 
         const data = await res.json();

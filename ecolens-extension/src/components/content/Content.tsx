@@ -23,9 +23,10 @@ interface Product {
 interface ContentProps {
   resetCounter: number;
   productInfo: Product | null;
+  uuid: string;
 }
 
-const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
+const Content: React.FC<ContentProps> = ({ resetCounter, productInfo, uuid }) => {
   const brand = productInfo?.brand ?? '';
   const description = productInfo?.description ?? '';
   const price = productInfo?.price ?? 0;
@@ -48,7 +49,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
 
   // Only send initial product info if you have it
   useEffect(() => {
-    socket.emit('join', 123);
+    socket.emit('join', uuid);
 
     // Replace with actual product info if available
     // fetch('http://localhost/api/product-info', ...);
@@ -61,7 +62,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
     });
 
     return () => {
-      socket.emit('leave', 123);
+      socket.emit('leave', uuid);
       socket.off('updateReply');
     };
   }, []);
@@ -89,7 +90,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
     const response = await fetch('https://lifehack25.onrender.com/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ previousContext, input: msg })
+      body: JSON.stringify({ previousContext, input: msg, uuid })
     });
 
     const data = await response.json();

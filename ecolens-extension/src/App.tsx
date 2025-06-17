@@ -25,14 +25,15 @@ function App() {
   };
 
   const footerShouldShow = true; // Replace with your actual condition
+  const uuid = crypto.randomUUID(); // For separate socket connections
 
   return (
     <div id='app'>
       <TitleBar />
-      <Header onRefresh={handleRefresh} />
-      <Content resetCounter={resetCounter} productInfo={productInfo} />
+      <Header onRefresh={handleRefresh} uuid={uuid}/>
+      <Content resetCounter={resetCounter} productInfo={productInfo} uuid={uuid} />
       {footerShouldShow ? (
-        <Footer />
+        <Footer uuid={uuid}/>
       ) : (
         <div
           className="footer-placeholder"

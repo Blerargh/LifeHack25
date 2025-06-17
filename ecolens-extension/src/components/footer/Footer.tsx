@@ -25,12 +25,16 @@ const getColor = (score: number): string => {
   return '#F44336';
 };
 
-const Footer: React.FC = () => {
+interface Props {
+  uuid: string;
+}
 
+const Footer: React.FC<Props> = (props) => {
+  const { uuid } = props
   const [info, setInfo] = useState<InfoReply>();
 
   useEffect(() => {
-    socket.emit('join', 123);
+    socket.emit('join', uuid);
 
     // Replace with actual product info if available
     // fetch('http://localhost/api/product-info', ...);
@@ -41,7 +45,7 @@ const Footer: React.FC = () => {
     });
 
     return () => {
-      socket.emit('leave', 123);
+      socket.emit('leave', uuid);
       socket.off('footerReply');
     };
   }, []);

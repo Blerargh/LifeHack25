@@ -45,6 +45,7 @@ app.use(morgan(':method :url :status :response-time ms'));
 
 app.post('/api/product-info', async (req, res) => {
   const { brand, description, price, shipCost, shipFrom, shipTo, title } = req.body.product;
+  const { uuid } = req.body.uuid
 
   let additionalContext = ''
   if (brand in ratings) {
@@ -78,10 +79,10 @@ app.post('/api/product-info', async (req, res) => {
     console.log('Final reply:', reply);
     if (openRouterResponse.status === 429) {
       res.status(429).json({ reply: 'Too many requests.' });
-      io.to(123).emit('updateReply', { reply: 'Too many requests.' });
+      io.to(uuid).emit('updateReply', { reply: 'Too many requests.' });
       return;
     } else {
-      io.to(123).emit('updateReply', { reply });
+      io.to(uuid).emit('updateReply', { reply });
     }
 
     openRouterResponse = await ai.models.generateContent({
@@ -134,18 +135,18 @@ app.post('/api/product-info', async (req, res) => {
       reply = JSON.parse(rawText);
     } catch (err) {
       console.error('Invalid JSON returned:', openRouterResponse.text);
-      io.to(123).emit('footerReply', { reply: 'Model returned invalid data.' });
+      io.to(uuid).emit('footerReply', { reply: 'Model returned invalid data.' });
       res.status(500).json({ reply: 'Model returned invalid data.' });
       return;
     }
 
     console.log('Footer reply:', reply);
     if (openRouterResponse.status === 429) {
-      io.to(123).emit('updateReply', { reply: 'Too many requests.' });
+      io.to(uuid).emit('updateReply', { reply: 'Too many requests.' });
       res.status(429).json({ reply: 'Too many requests.' });
       return;
     } else {
-      io.to(123).emit('footerReply', { reply });
+      io.to(uuid).emit('footerReply', { reply });
       res.status(200).json({ reply });
     }
   } catch (error) {
@@ -155,7 +156,7 @@ app.post('/api/product-info', async (req, res) => {
 });
 
 app.post('/api/chat', async (req, res) => {
-  const { previousContext, input } = req.body;
+  const { previousContext, input, uuid } = req.body;
 
   try {
     const openRouterResponse = await ai.models.generateContent({
@@ -183,12 +184,12 @@ app.post('/api/chat', async (req, res) => {
     console.log('Final reply:', reply);
     if (openRouterResponse.status === 429) {
       res.status(429).json({ reply: 'Too many requests.' });
-      io.to(123).emit('updateReply', { reply: 'Too many requests.' });
+      io.to(uuid).emit('updateReply', { reply: 'Too many requests.' });
       return;
     }
 
     else res.status(200).json({ reply });
-    io.to(123).emit('updateReply', { reply });
+    io.to(uuid).emit('updateReply', { reply });
   } catch (error) {
     console.error('Error sending to OpenRouter:', error.message);
     res.status(500).json({ error: 'Failed to get response from OpenRouter' });
