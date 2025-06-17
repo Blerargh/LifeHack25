@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../../styles/content.css';
 import { io } from 'socket.io-client';
+import ReactMarkdown from 'react-markdown'
 
-const socket = io('http://localhost:8080');
+const socket = io('http://localhost:5000');
 
 type Message = {
   sender: 'user' | 'llm';
@@ -82,7 +83,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
       { sender: 'llm', text: 'Give me a moment to reply...' }
     ]);
 
-    const response = await fetch('http://localhost:8080/api/chat', {
+    const response = await fetch('http://localhost:5000/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ previousContext, input })
@@ -96,7 +97,10 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') handleSend();
+    if (e.key === 'Enter') {
+      setInput('');
+      handleSend();
+    }
   };
 
   return (
@@ -117,7 +121,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
               alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start'
             }}
           >
-            {msg.text}
+            {(<ReactMarkdown>{msg.text}</ReactMarkdown>)}
           </div>
         ))}
         <div ref={chatEndRef} />

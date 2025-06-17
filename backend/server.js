@@ -15,7 +15,7 @@ const io = new Server(server, {
     credentials: true,
   }
 });
-const PORT = 8080;
+const PORT = 5000;
 
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
@@ -129,10 +129,10 @@ app.post('/api/product-info', async (req, res) => {
       res.status(429).json({ reply: 'Too many requests.' });
       io.to(123).emit('updateReply', { reply: 'Too many requests.' });
       return;
+    } else {
+      res.status(200).json({ reply });
+      io.to(123).emit('updateReply', { reply });
     }
-
-    else res.status(200).json({ reply });
-    io.to(123).emit('updateReply', { reply });
   } catch (error) {
     console.error('Error sending to OpenRouter:', error.message);
     res.status(500).json({ error: 'Failed to get response from OpenRouter' });
@@ -166,10 +166,14 @@ app.post('/api/chat', async (req, res) => {
                       Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
                       "Sorry, I cannot help you with such a query."\n\n\
                       Below was the actual chat between you (llm) and the user (user)\n\n\
-                      ${previousContext}\n\n\
-                      The user is going to ask you another question. Reasoning should be linked to sustainability before replying. \
+                      ${previousContext}\n\n`
+              },
+              {
+                "type": "text",
+                "text": "The user is now going to ask you another question. Reasoning should be linked to sustainability before replying directly to the query, \
+                      ignoring the format provided in the context before. \
                       Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
-                      "Sorry, I cannot help you with such a query.`
+                      \"Sorry, I cannot help you with such a query.\""
               }
             ],
           },
