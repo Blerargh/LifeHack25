@@ -14,9 +14,12 @@
     const shipFromEl = document.querySelector('#fulfillerInfoFeature_feature_div .offer-display-feature-text .offer-display-feature-text-message');
     shipFrom = shipFromEl ? shipFromEl.textContent.trim() : '';
 
-    price = parseFloat(document.querySelector('.aok-offscreen').innerHTML.trim().slice(2));
+    const priceEl = document.querySelector('.aok-offscreen');
+    price = priceEl && priceEl.innerHTML
+      ? parseFloat(priceEl.innerHTML.trim().slice(2))
+      : parseFloat(document.querySelector('.a-offscreen').innerHTML.trim().slice(2));
 
-    shipCost = document.querySelector('[data-csa-c-delivery-price]').getAttribute('data-csa-c-delivery-price');
+    shipCost = document.querySelector('[data-csa-c-delivery-price]')?.getAttribute('data-csa-c-delivery-price') ?? 'FREE';
     shipCost = shipCost === 'FREE' ? 0 : parseFloat(shipCost.slice(2));
 
     brand = document.getElementById('bylineInfo').innerText.slice(7);
