@@ -52,7 +52,7 @@ const Footer: React.FC<FooterProps> = (props) => {
           </div>
         ))}
       </div>
-      <button className='show-more-button'>Show more</button>
+      <button className='show-more-button'>Show more →</button>
     </div>
   )
 }

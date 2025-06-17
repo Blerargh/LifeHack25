@@ -107,7 +107,7 @@ const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
 
   return (
     <div className="content-container" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div className="chat-history" style={{ flex: 1, overflowY: 'auto', marginBottom: 8 }}>
+      <div className="chat-history" style={{ overflowY: 'auto', marginBottom: 8, height: '90%', maxHeight: '100%', wordWrap: 'break-word' }}>
         {messages.map((msg, idx) => (
           <div
             key={idx}
