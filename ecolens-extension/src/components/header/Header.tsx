@@ -11,7 +11,11 @@ interface Product {
   title: string;
 }
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onRefresh: (product: Product | null) => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onRefresh }) => {
   const [productTitle, setProductTitle] = useState<string>('');
   const [showFull, setShowFull] = useState<boolean>(false);
   const [APIMessage, setAPIMessage] = useState<string>('');
@@ -34,6 +38,7 @@ const Header: React.FC = () => {
 
     const product = results && results[0] ? (results[0].result as Product) : null;
     const title = product?.title || '';
+    onRefresh(product);
     setProductTitle(title);
 
     // Backend Sending here

@@ -9,12 +9,41 @@ type Message = {
   text: string;
 };
 
-const Content: React.FC = () => {
+interface Product {
+  brand: string;
+  description: string;
+  price: number;
+  shipCost: number;
+  shipFrom: string;
+  shipTo: string;
+  title: string;
+}
+
+interface ContentProps {
+  resetCounter: number;
+  productInfo: Product | null;
+}
+
+const Content: React.FC<ContentProps> = ({ resetCounter, productInfo }) => {
+  const brand = productInfo?.brand ?? '';
+  const description = productInfo?.description ?? '';
+  const price = productInfo?.price ?? 0;
+  const shipCost = productInfo?.shipCost ?? 0;
+  const shipFrom = productInfo?.shipFrom ?? '';
+  const shipTo = productInfo?.shipTo ?? '';
+  const title = productInfo?.title ?? '';
   const [messages, setMessages] = useState<Message[]>([
     { sender: 'llm', text: 'Give me a moment to provide a sustainability analysis of the product...' }
   ]);
   const [input, setInput] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMessages([
+      { sender: 'llm', text: 'Give me a moment to provide a sustainability analysis of the product...' }
+    ]);
+    setInput('');
+  }, [resetCounter]);
 
   // Only send initial product info if you have it
   useEffect(() => {
@@ -44,7 +73,9 @@ const Content: React.FC = () => {
     if (!input.trim()) return;
 
     const previousMessages = [...messages]
-    const previousContext = previousMessages.map((chat) => chat.sender + ': ' + chat.text);
+    const previousContext = `The product is ${title}. Brand: ${brand}, Price: ${price}, Shipping Fee: ${shipCost}, Shipping from ${shipFrom} to ${shipTo}, \
+                         Product Description: ${description}. \
+                ` + previousMessages.map((chat) => chat.sender + ': ' + chat.text);
     setMessages(prev => [
       ...prev,
       { sender: 'user', text: input },
@@ -59,8 +90,8 @@ const Content: React.FC = () => {
 
     const data = await response.json();
     setMessages([...previousMessages,
-      { sender: 'user', text: input },
-      { sender: 'llm', text: data.reply}
+    { sender: 'user', text: input },
+    { sender: 'llm', text: data.reply }
     ]);
   };
 

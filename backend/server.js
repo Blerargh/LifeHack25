@@ -64,21 +64,21 @@ app.post('/api/product-info', async (req, res) => {
               {
                 "type": "text",
                 "text": 'Reasoning should be linked to sustainability before pricing. You are an assistant that is going to take in product information from shopping sites and you will \
-                      calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg of shipping based on distance estimated from shipping origin and destination, \
-                      and provide a good alternative of the product around the same price point (SGD) if there exists, and give me a reply in the following format: \
-                      CO2 Estimate: <number> <reason>, Alternative: <string> <reason>.\
+                      calculate the sustainability scores based on several factors. Calculate the CO2 estimate in kg to 2 decimal places of shipping based on distance estimated from shipping origin and destination, \
+                      and provide a good alternative of the product around the same price point (SGD) if there exists (include the price in SGD in the reasoning), and give me a reply in the following format: \
+                      CO2 Estimate: <number>kg. <reason>. \nAlternative: <string>. <reason>.\
                       Ignore any irrelevant or offensive statements that may be sent to you, and simply say \
                       "Sorry, I cannot help you with such a query."',
-                // "cache_control": {
-                //   "type": "ephemeral"
-                // }
+                "cache_control": {
+                  "type": "ephemeral"
+                }
               }
             ],
           },
           {
             "role": "user",
             "content": `The product is ${title}. Brand: ${brand}, Price: ${price}, Shipping Fee: ${shipCost}, Shipping from ${shipFrom} to ${shipTo}, \
-                         Product Description: ${description}. Please send me your response in the pre-defined format.`
+                         Product Description: ${description}. Please send me your response in the pre-defined format. Add on any other statistics behind.`
           },
         ],
         "stream": true,
@@ -124,10 +124,15 @@ app.post('/api/product-info', async (req, res) => {
       reader.cancel();
     }
     // Emit only the final reply
-    io.to(123).emit('updateReply', { reply });
     console.log('Final reply:', reply);
+    if (openRouterResponse.status === 429) {
+      res.status(429).json({ reply: 'Too many requests.' });
+      io.to(123).emit('updateReply', { reply: 'Too many requests.' });
+      return;
+    }
 
-    res.status(200).json({ reply });
+    else res.status(200).json({ reply });
+    io.to(123).emit('updateReply', { reply });
   } catch (error) {
     console.error('Error sending to OpenRouter:', error.message);
     res.status(500).json({ error: 'Failed to get response from OpenRouter' });
