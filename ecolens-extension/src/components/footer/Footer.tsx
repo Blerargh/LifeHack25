@@ -36,25 +36,25 @@ const Footer: React.FC<FooterProps> = (props) => {
     {
       criteria: 'test2',
       value: 10023,
-      progressBar: 90, // Out of 100
+      progressBar: 30, // Out of 100
       color: '#fff' // Hex info
     },
     {
       criteria: 'test2',
       value: 10023,
-      progressBar: 90, // Out of 100
+      progressBar: 50, // Out of 100
       color: '#fff' // Hex info
     },
     {
       criteria: 'test2',
       value: 10023,
-      progressBar: 90, // Out of 100
+      progressBar: 70, // Out of 100
       color: '#fff' // Hex info
     },
     {
       criteria: 'test2',
       value: 10023,
-      progressBar: 90, // Out of 100
+      progressBar: 10, // Out of 100
       color: '#fff' // Hex info
     },
     {
