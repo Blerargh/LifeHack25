@@ -21,7 +21,26 @@ h3 {
 .popup-bar-items-container {
   display: flex;
   flex-direction: row;
+  justify-content: space-evenly;
   overflow-x: auto;
+  overflow-y: hidden;
+  margin-top: 20px;
+  gap: 16px;
+  padding: 0 12px;   
+  scroll-behavior: smooth;
+}
+
+.popup-bar-item {
+  flex-shrink: 0;
+  height: 125px;
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.progress-bar {
+  object-fit: scale-down !important;
 }
 
 .popup-description {

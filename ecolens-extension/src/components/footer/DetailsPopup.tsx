@@ -21,6 +21,12 @@ interface Props {
 
 const DetailsPopup: React.FC<Props> = (props) => {
   const { info, description, setShowPopup } = props
+  const getSeverityColor = (value: number) => {
+    if (value < 33) return '#34C759';   // Red
+    if (value < 66) return '#FFD60A';   // Yellow
+    return '#FF3B30';                   // Green
+  }
+
   return (
     <motion.div 
       className='details-popup-container'
@@ -34,13 +40,13 @@ const DetailsPopup: React.FC<Props> = (props) => {
       <div className='show-more-info-container'>
         <div className='popup-bar-items-container'>
           {info.map((displayInfo) => (
-            <div className='bar-item'>
+            <div className='popup-bar-item'>
               <CircularProgressbar
                 className='progress-bar'
                 value={displayInfo.progressBar}
                 text={`${displayInfo.value}`}
                 styles={buildStyles({
-                  pathColor: displayInfo.color,
+                  pathColor: getSeverityColor(displayInfo.progressBar),
                   textColor: '#fff',
                 })}
               />

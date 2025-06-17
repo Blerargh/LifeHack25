@@ -66,6 +66,12 @@ const Footer: React.FC<FooterProps> = (props) => {
   ]
   const previewDisplay = info.length > 2 ? info.slice(0, 2) : info;
 
+  const getSeverityColor = (value: number) => {
+    if (value < 33) return '#34C759';   // Red
+    if (value < 66) return '#FFD60A';   // Yellow
+    return '#FF3B30';                   // Green
+  }
+
   return (
     <>
       {showMore ? <DetailsPopup info={info} description={'lorem ipsum'} setShowPopup={setShowMore}/> : <></>}
@@ -78,7 +84,7 @@ const Footer: React.FC<FooterProps> = (props) => {
                 value={displayInfo.progressBar}
                 text={`${displayInfo.value}`}
                 styles={buildStyles({
-                  pathColor: displayInfo.color,
+                  pathColor: getSeverityColor(displayInfo.progressBar),
                   textColor: '#fff',
                 })}
               />
@@ -89,6 +95,7 @@ const Footer: React.FC<FooterProps> = (props) => {
         <button className='show-more-button' onClick={handleShowMoreClick}>Show more →</button>
       </div>
     </>
+    
   )
 }
 
