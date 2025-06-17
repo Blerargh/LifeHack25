@@ -79,7 +79,7 @@ const Footer: React.FC<Props> = (props) => {
               <div className="bar-item" key={idx}>
                 <CircularProgressbar
                   value={item.score}
-                  text={`${item.value}`}
+                  text={`${item.score}`}
                   styles={buildStyles({
                     pathColor: getColor(item.score),
                     textColor: '#fff',

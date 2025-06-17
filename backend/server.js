@@ -49,7 +49,7 @@ app.post('/api/product-info', async (req, res) => {
 
   let additionalContext = ''
   if (brand in ratings) {
-    additionalContext = ratings[brand]['summary']  
+    additionalContext = ratings[brand]['summary']
   }
 
   if (!title) {

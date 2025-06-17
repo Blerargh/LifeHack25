@@ -21,6 +21,7 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, uuid }) => {
   const [productTitle, setProductTitle] = useState<string>('');
   const [showFull, setShowFull] = useState<boolean>(false);
   const [APIMessage, setAPIMessage] = useState<string>('');
+  const [scriptMessage, setScriptMessage] = useState<string>('');
 
   const handleClick = async () => {
     setProductTitle('');
@@ -37,6 +38,11 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, uuid }) => {
       target: { tabId: tab.id },
       files: ["src/scripts/siteinfo.js"]
     });
+
+    if (typeof results[0].result === "string") {
+      console.log(results[0].result);
+      setScriptMessage(results[0].result);
+    }
 
     const product = results && results[0] ? (results[0].result as Product) : null;
     const title = product?.title || '';
@@ -88,9 +94,9 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, uuid }) => {
       <span>Product Name:</span>
       <div
         className='product-details product-details-dark'
-        title={productTitle.length > 24 ? productTitle : ""}
+        title={productTitle}
       >
-        {productTitle || <span style={{ color: '#aaa' }}>No product</span>}
+        {productTitle || <span style={{ color: '#aaa' }}>{scriptMessage}</span>}
       </div>
       {productTitle.length > 24 && (
         <button

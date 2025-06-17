@@ -65,7 +65,7 @@ const DetailsPopup: React.FC<Props> = (props) => {
               <CircularProgressbar
                 className='progress-bar'
                 value={displayInfo.score}
-                text={`${displayInfo.value}`}
+                text={`${displayInfo.score}`}
                 styles={buildStyles({
                   pathColor: getColor(displayInfo.score),
                   textColor: '#fff',

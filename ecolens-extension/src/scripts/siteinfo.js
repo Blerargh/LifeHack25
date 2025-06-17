@@ -25,7 +25,7 @@
     brand = document.getElementById('bylineInfo')?.innerText.slice(7) ?? '';
 
     description = Array.from(document.getElementById('feature-bullets')?.querySelectorAll('.a-list-item') ?? []).map((e) => e.innerText.trim()).join('\n');
-  
+
   } else if (location.hostname.includes('shopee.')) {
     // Shopee: use stable attribute, then h1, then fallback to document title
     let titleEl = document.querySelector('[data-sqe="name"]')
@@ -92,7 +92,7 @@
     if (description === '') description = Array.from(document.querySelectorAll('.pdp-product-desc')).map((e) => e.innerText.trim()).join('\n');
   }
 
-  const result = { title, shipFrom, shipTo, price, shipCost, brand, description } 
+  const result = { title, shipFrom, shipTo, price, shipCost, brand, description }
   console.log(result);
   return result || 'No product found';
 })();
